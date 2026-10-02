@@ -98,3 +98,35 @@ $('#reviewMore').onclick=()=>{
  if(!reviewsExpanded) $('#reviews').scrollIntoView({behavior:'smooth',block:'start'});
 };
 renderReviews();
+
+// V21 — consultation modal + Netlify Forms AJAX submission
+(() => {
+  const modal=document.getElementById('consultModal');
+  const form=document.getElementById('consultForm');
+  const status=document.getElementById('consultStatus');
+  if(!modal||!form) return;
+  const open=()=>{modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');setTimeout(()=>form.querySelector('input[name="name"]')?.focus(),80)};
+  const close=()=>{modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open')};
+  document.querySelectorAll('[data-open-consult]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();open()}));
+  document.querySelectorAll('[data-close-consult]').forEach(el=>el.addEventListener('click',close));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('is-open')) close()});
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    if(!form.reportValidity()) return;
+    const btn=form.querySelector('.consult-submit'), old=btn.innerHTML;
+    btn.disabled=true; btn.textContent='상담 신청을 접수하고 있습니다...'; status.textContent=''; status.className='consult-status';
+    try{
+      const body=new URLSearchParams(new FormData(form)).toString();
+      const res=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
+      if(!res.ok) throw new Error('submit failed');
+      status.textContent='상담 신청이 접수되었습니다. 담당자가 확인 후 연락드리겠습니다.';
+      status.className='consult-status ok'; form.reset();
+    }catch(err){
+      status.textContent='현재 접수에 실패했습니다. 잠시 후 다시 시도해주세요.';
+      status.className='consult-status err';
+    }finally{btn.disabled=false;btn.innerHTML=old}
+  });
+})();
+
+// V23 teacher section
+(()=>{const s=document.querySelector(".teachers-section"),b=document.getElementById("teacherMoreBtn");if(s&&b)b.addEventListener("click",()=>{const x=s.classList.toggle("expanded");b.textContent=x?"선생님 접기 −":"선생님 더보기 ＋"});const p=document.getElementById("preferredTeacher");document.querySelectorAll("[data-teacher-consult]").forEach(x=>x.addEventListener("click",()=>{if(p)p.value=x.dataset.teacherConsult||"";document.querySelector("[data-open-consult]")?.click()}));})();
