@@ -653,3 +653,6 @@ body.modal-open{overflow:hidden}
 .floating-phone-v24 span{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:#ff3f87;font-size:20px}.floating-phone-v24 b{font-size:13px}.floating-phone-v24 small{font-size:11px;color:#ddd}
 
 @media(max-width:600px){.floating-phone-v24{right:14px;bottom:14px;padding:8px}.floating-phone-v24 b,.floating-phone-v24 small{display:none}.floating-phone-v24 span{width:48px;height:48px}}
+
+/* V26 optional consultation address */
+.consult-address span em{font-style:normal;font-weight:500;color:#777;font-size:.9em}
